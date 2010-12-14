@@ -47,7 +47,7 @@ for this sources.
 
 == Inspirited by
 
- * https://github.com/fcheung/tattler
+* https://github.com/fcheung/tattler
 
 Also good partials helper with javascript ui: https://github.com/markevans/partial_identifier
 
