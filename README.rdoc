@@ -1,56 +1,94 @@
-= PainlessPartials
+= SpreeAuthDisabler extension
 
-In case when we need to override some partial which may be plased in some engine-gem
-it may be painfull to findout which partial are rendered in certain place.
+This extension aims to extend the spree auth logic by optional disabling of:
 
-For this purposes created gem painless_partials. It aimed to:
+* Client singup
+* Password recovery
+* Client login
 
-* as-minimum: markup html/xml by comments with partial paths (done)
-* as-maximum: provide service for coping partial from gem into main app (50% done)
-  or into some extension (site-theme and so on)
+Since the extension included in your Gemfile all listed features will be 
+disabled by default.
 
-It is usefurl, for example, in development of application based on spree.
+Use Spree::Auth::Disabler::Config (spree_auth_disabler:app/models/spree_auth_disabler_configuration.rb) 
+for switch this preferences:
 
-Works with Rails 3.0+
+* :client_signup_enabled,      :default => false
+* :password_recoverty_enabled, :default => false
+* :client_login_enabled,       :default => false
 
-== Usage
+NOTE: it is recomended to enable client login if client signup enabled, lest 
+clients will get 'Authorization failed' after signup (but the user and the session 
+will be created). See issues below.
 
-Add gem into Gemfile
+== Installing
 
-  gem 'painless_partials'
+1. Add into your Gemfile
+
+  gem 'spree_auth_disabler'
 
 or
 
-  gem 'painless_partials', :git => 'git://github.com/x2es/painless_partials.git'
+  gem 'spree_auth_disabler', :git => 'git://github.com/x2es/spree_auth_disabler.git'
 
-== Example
+NOTE: this extension overrides several views. Loading order does matter. You should place
+this gem above an your theme, at least.
+If other your extensions overrides an auth-views you should decide right loading order.
+You may find useful the gem 'painless_partials' for inspecting the usage roadmap of views.
 
-Just open page source in browser and find comment "TEMPLATE /path/to/partial.html.erb" 
-placed above code which you want to override. For example:
+1. Setup your Spree::Auth::Disabler::Config propertly (see bellow).
 
-  <!-- TEMPLATE: /usr/local/rvm/gems/ruby-1.9.2-p0@wesc-spree-0.30/gems/spree_core-0.30.1/app/views/shared/_google_analytics.html.erb --> 
+== Configuration ways
 
-Also painless_partials gives tip about how to override partial. For example:
-  <!-- 
-     For overriding this partial you may run from project (or engine/extension) dir:
-      $ mkdir -p app/views/shared && cp /usr/local/rvm/gems/ruby-1.9.2-p0@awesome-gemset/gems/spree_core-0.30.1/app/views/shared/_google_analytics.html.erb app/views/shared/_google_analytics.html.erb
-     NOTE: Please make sure that it is what you want before running. In common case it is.
-  --> 
+You can use the Spree::Auth::Disabler::Config in such manner as the Spree::Config or Spreee::Auth::Config
 
-In common case all you need it to point project or engine/extension dir in your 
-therminal and invoke this command.
+  Spree::Auth::Disabler::Config[:client_login_enabled]              # Returns the foo preference
+  Spree::Auth::Disabler::Config[]                                   # Returns a Hash with all the preferences
+  Spree::Auth::Disabler::Config.instance                            # Returns the configuration object
+  Spree::Auth::Disabler::Config.set(:client_login_enabled => true)  # Set the spree auth preferences as especified in +preference_hash+
 
-Tip will be shown only for "foreign" sources. "Foreign" means - sources placed 
-outside "#{Rails.root}/../". 
-So if you develop extensions placed in #{Rails.root}/../my-extensions/ - tip does not appears 
-for this sources.
+Default values initialized in spree_auth_disabler:app/models/spree_auth_disabler_configuration.rb
 
-== Inspirited by
+TODO: two words about overriding preferences class facilities
 
-* https://github.com/fcheung/tattler
+See the guide http://edgeguides.spreecommerce.com/preferences.html for more details
 
-Also good partials helper with javascript ui: https://github.com/markevans/partial_identifier
+== Configuration explanation
 
-== Issues & TODO
+* unless :client_signup_enabled
 
-See https://github.com/x2es/painless_partials/issues
+  * signup actions will be disabled (new and create), the user will be redirected to root_url, flash[:error] will be supplied
+  * link to signup from login form will be hidden
+
+* unless :password_recoverty_enabled
+  
+  * password recovery actions will be disabled (new and create), redirect and flash[:error] are same as above
+  * link to password recovery from login form will be hidden
+
+* unless :client_login_enabled
+
+  * login actions will deny client login (only create), redirect and flash[:error] are same as above
+  * link to login form will be hidden
+
+  NOTE: 
+    If you have overrided layouts/spree_application.html.erb, you may want to remove the <li> tag
+    surrond the <%= render 'shared/login_bar' %> since an <li> alerady exists in this partial
+
+== Extensions collisions
+
+This extension overrides some views. If you already overrided views, which overrided in this extension too, 
+you may want to checkout differences and apply some changes to your views.
+
+= TODO
+
+* Specs!
+
+== Issues
+
+* 'Autorization failed' ISSUE, when client login disabled, but client signup enabled (after signup)
+
+= Help me
+
+* to fix English grammar in this text (now I am tring to setup articles, but I am not feel yet this aspect
+to do this job propertly)
+
+ 
