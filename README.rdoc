@@ -13,4 +13,22 @@ It is usefurl, for example, in development of application based on spree.
 
 Works with Rails 3.0+
 
+== Usage
+
+Add gem into Gemfile
+
+  gem 'painless_partials'
+
+or
+
+  gem 'painless_partials', :git => 'git://github.com/x2es/painless_partials.git'
+
+== Example
+
+Just open page source in browser and find comment "TEMPLATE /path/to/partial.html.erb" 
+placed above code which you want to override. For example:
+
+<!-- TEMPLATE: /usr/local/rvm/gems/ruby-1.9.2-p0@wesc-spree-0.30/gems/spree_core-0.30.1/app/views/shared/_google_analytics.html.erb --> 
+
+Also painless_partials gives tip about how to override partial. For example:
 
