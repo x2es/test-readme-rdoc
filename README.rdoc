@@ -88,7 +88,6 @@ you may want to checkout differences and apply some changes to your views.
 
 = Help me
 
-* to fix English grammar in this text (now I am tring to setup articles, but I am not feel yet this aspect
-to do this job propertly)
+* to fix English grammar in this text (now I am tring to setup articles, but I am not feel yet this aspect to do this job propertly)
 
  
